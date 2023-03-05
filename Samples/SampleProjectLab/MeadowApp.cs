@@ -1,4 +1,7 @@
-﻿using Glade2d;
+﻿using System;
+using System.Diagnostics;
+using System.Reflection;
+using Glade2d;
 using Glade2d.Services;
 using GladeSampleShared.Screens;
 using Meadow;
@@ -56,7 +59,7 @@ namespace SampleProjectLab
             var chipSelectPort = mcp.CreateDigitalOutputPort(mcp.Pins.GP5);
             var dcPort = mcp.CreateDigitalOutputPort(mcp.Pins.GP6);
             var resetPort = mcp.CreateDigitalOutputPort(mcp.Pins.GP7);
-            
+
             var st7789 = new St7789(
                 spiBus: spi,
                 chipSelectPort: chipSelectPort,
@@ -64,10 +67,85 @@ namespace SampleProjectLab
                 resetPort: resetPort,
                 width: 240, height: 240,
                 colorMode: ColorMode.Format16bppRgb565);
-            
+
+            var busNumberProperty = typeof(SpiBus).GetProperty("BusNumber",
+                BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+            if (busNumberProperty == null)
+            {
+                throw new InvalidOperationException("No bus number");
+            }
+
+            var busNumber = (int)busNumberProperty.GetValue(spi);
+            Console.WriteLine($"Bus number: {busNumber}");
+
             // st7789.SetRotation(TftSpiBase.Rotation.Rotate_90);
+            Console.WriteLine($"Drive handle: {LocalInterop.DriverHandle}");
+
+            var buffer = new byte[240 * 240 * 2];
+            for (var x = 0; x < buffer.Length; x += 2)
+            {
+                buffer[x] = 0b11111000;
+            }
+
+            var span = buffer.AsSpan();
+            MeasureWrite(chipSelectPort, span.Slice(0, 240 * 1 * 2), busNumber);
+            MeasureWrite(chipSelectPort, span.Slice(0, 240 * 1 * 2), busNumber);
+            MeasureWrite(chipSelectPort, span.Slice(0, 240 * 60 * 2), busNumber);
+            MeasureWrite(chipSelectPort, span.Slice(0, 240 * 120 * 2), busNumber);
+            MeasureWrite(chipSelectPort, span.Slice(0, 240 * 180 * 2), busNumber);
+            MeasureWrite(chipSelectPort, span.Slice(0, 240 * 240 * 2), busNumber);
+            MeasureWrite(chipSelectPort, span.Slice(0, 240 * 240 * 2), busNumber);
+            
 
             display = st7789;
+        }
+
+        private static void MeasureWrite(IDigitalOutputPort chipSelectPort, Span<byte> span, int busNumber)
+        {
+            var stopwatch = Stopwatch.StartNew();
+            var ioctlTIming = Write(chipSelectPort, span, busNumber);
+            stopwatch.Stop();
+            Console.WriteLine($"Buffer with {span.Length} bytes written in {stopwatch.ElapsedMilliseconds} ms ({ioctlTIming})");
+        }
+
+
+        private static unsafe long Write(
+            IDigitalOutputPort? chipSelect,
+            Span<byte> writeBuffer,
+            int busNumber,
+            ChipSelectMode csMode = ChipSelectMode.ActiveLow)
+        {
+            if (chipSelect != null)
+                chipSelect.State = csMode != ChipSelectMode.ActiveLow;
+
+            fixed (byte* numPtr = &writeBuffer.GetPinnableReference())
+            {
+                var spiCommand = new UpdSPIDataCommand()
+                {
+                    BufferLength = writeBuffer.Length,
+                    TxBuffer = (IntPtr)(void*)numPtr,
+                    RxBuffer = IntPtr.Zero,
+                    BusNumber = busNumber
+                };
+
+                var timer = Stopwatch.StartNew();
+                var (result, timing) = LocalInterop.Ioctl(UpdIoctlFn.SPIData, ref spiCommand);
+                timer.Stop();
+                Console.WriteLine($"Outer ioctl: {timer.ElapsedMilliseconds}");
+                if (result != 0)
+                {
+                    Console.WriteLine($"Error code: {LocalInterop.GetLastError()}");
+                }
+
+                if (chipSelect == null)
+                {
+                    return timing;
+                }
+
+                chipSelect.State = csMode == ChipSelectMode.ActiveLow;
+
+                return timing;
+            }
         }
     }
 }
