@@ -39,6 +39,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GladeInvade.Monogame", "Sam
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GladePlatformer.Juego", "Samples\GladePlatformer.Juego\GladePlatformer.Juego.csproj", "{E0201E7E-3A97-4EAD-81CB-193B878E7F76}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Glade2d.Boards.Juego", "Glade2d.Boards.Juego\Glade2d.Boards.Juego.csproj", "{F9E345F4-B7DA-4BB6-B266-BDB4D26B172E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -107,6 +109,10 @@ Global
 		{E0201E7E-3A97-4EAD-81CB-193B878E7F76}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E0201E7E-3A97-4EAD-81CB-193B878E7F76}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E0201E7E-3A97-4EAD-81CB-193B878E7F76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9E345F4-B7DA-4BB6-B266-BDB4D26B172E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9E345F4-B7DA-4BB6-B266-BDB4D26B172E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9E345F4-B7DA-4BB6-B266-BDB4D26B172E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9E345F4-B7DA-4BB6-B266-BDB4D26B172E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

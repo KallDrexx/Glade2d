@@ -25,6 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\Glade2d.Boards.Juego\Glade2d.Boards.Juego.csproj" />
         <ProjectReference Include="..\..\Glade2d\Glade2d.csproj" />
         <ProjectReference Include="..\GladePlatformer.Shared\GladePlatformer.Shared.csproj" />
     </ItemGroup>
