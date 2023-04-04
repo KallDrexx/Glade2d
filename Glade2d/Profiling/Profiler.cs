@@ -94,11 +94,7 @@ public class Profiler
             return;
         }
 
-        if (_lastReportAt == null)
-        {
-            _lastReportAt = DateTime.Now;
-        }
-
+        _lastReportAt ??= DateTime.Now;
         if (DateTime.Now - _lastReportAt < TimeBetweenReports)
         {
             return;
@@ -112,7 +108,10 @@ public class Profiler
         {
             var averageTicks = _elapsedTicks[name].GetAverageTicks();
             var milliseconds = averageTicks / ticksPerMilli;
-            _reportString.AppendLine($"{name}: {milliseconds}ms");
+            _reportString.Append(name);
+            _reportString.Append(": ");
+            _reportString.Append(milliseconds);
+            _reportString.AppendLine("ms");
         }
         
         Console.WriteLine(_reportString);
