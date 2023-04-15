@@ -23,44 +23,71 @@ public class Ht16k33LedScoreboard : IScoreBoard
     public void SetDisplay(string characters)
     {
         ClearDisplay();
-        for (var displayIndex = 0; displayIndex < Math.Max(characters.Length, 4); displayIndex++)
+        for (var index = 0; index < 4; index++)
         {
-            var asciiChar = characters[displayIndex];
-            if (asciiChar < 32 || asciiChar > 126)
+            if (characters.Length <= index)
             {
-                asciiChar = ' ';
+                break;
             }
+            
+            DisplayCharacter(characters[index], (byte)index);
+            
+        }
+        
+        _display.UpdateDisplay();
+    }
 
-            var data = fourteenSegmentASCII[asciiChar - 32];
-            for (var x = 0; x < 16; x++)
-            {
-                _display.
-            }
+    // 0-3: top horizontal - a
+    // 4-7: right middle horizontal - g2/i
+    // 8: colon - d1/d2
+    // 16-19: right top vertical - b
+    // 20-23: left top diagonal - h
+    // 24: decimal point - dp
+    // 32-35: right bottom vertical - c
+    // 36-39: middle top vertical - j
+    // 48-51: bottom horizontal - d
+    // 52-55: right top diagonal - k
+    // 64-67: left bottom vertical - e
+    // 68-71: right bottom diagonal - l 
+    // 80-83: left top vertical - f
+    // 84-87: middle bottom vertical - m
+    // 96-99: left middle horizontal - g1/g
+    // 100-103: left bottom diagonal - n
+
+    private void DisplayCharacter(char character, byte slot)
+    {
+        if (slot >= 4)
+        {
+            // only 4 slots available
+            return;
+        }
+        
+        if (character < 32 || character > 126)
+        {
+            // Out of ascii range
+            return;
         }
 
-        byte index = 0;
-        while (true)
+        var data = FourteenSegmentAscii[character - 32];
+        for (var bit = 0; bit < 16; bit++)
         {
-            _display.ClearDisplay();
-            _display.SetLed(index, true);
-            _display.UpdateDisplay();
-
-            Console.WriteLine($"LED: {index}");
-            Thread.Sleep(1000);
-
-            if (index == 127)
+            if (((data >> bit) & 1) != 0)
             {
-                index = 0;
-            }
-            else
-            {
-                index++;
+                var index = (byte)(SegmentIndices[bit] + slot);
+                _display.SetLed(index, true);
             }
         }
     }
 
-    private static ushort[] fourteenSegmentASCII =
+    private static readonly byte[] SegmentIndices =
     {
+        // abcdefghijklmn
+        0, 16, 32, 48, 64, 80, 96, 20, 4, 36, 52, 68, 84, 100
+    };
+
+    private static readonly ushort[] FourteenSegmentAscii =
+    {
+        // nmlkjihgfedcba
         0b00000000000000, // ' ' (space)
         0b00001000001000, // '!'
         0b00001000000010, // '"'
