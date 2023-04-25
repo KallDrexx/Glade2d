@@ -1,7 +1,6 @@
 ﻿using Glade2d.Graphics;
 using Glade2d.Services;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 
 namespace Glade2d.Screens
@@ -11,6 +10,8 @@ namespace Glade2d.Screens
         List<Sprite> sprites = new List<Sprite>();
         bool listSortNeeded = false;
 
+        internal List<SpriteRenderRegion> ModifiedRegions { get; } = new();
+
         public Screen() { }
 
         /// <summary>
@@ -19,6 +20,7 @@ namespace Glade2d.Screens
         /// </summary>
         public void Update()
         {
+            ModifiedRegions.Clear();
             if(listSortNeeded)
             {
                 LogService.Log.Trace("Resorting sprite list.");
@@ -32,6 +34,11 @@ namespace Glade2d.Screens
                 if (currentSprite.Destroyed)
                 {
                     RemoveSprite(i);
+                    var region = currentSprite.GetRenderRegionIfChanged();
+                    if (region.Old != null)
+                    {
+                        ModifiedRegions.Add(region.Old.Value);
+                    }
                 }
                 else
                 {
@@ -40,6 +47,27 @@ namespace Glade2d.Screens
             }
 
             Activity();
+            
+            // Now that all sprites have been updated, if any of them have 
+            // changed we need to consider their old and new regions
+            // as modified
+            for (var x = 0; x < sprites.Count; x++)
+            {
+                var regions = sprites[x].GetRenderRegionIfChanged();
+                if (regions.New == null)
+                {
+                    // If there is no new region, then the sprite requires
+                    // no new rendering
+                    continue;
+                }
+
+                if (regions.Old != null)
+                {
+                    ModifiedRegions.Add(regions.Old.Value);
+                }
+                
+                ModifiedRegions.Add(regions.New.Value);
+            }
         }
 
         /// <summary>
@@ -99,9 +127,10 @@ namespace Glade2d.Screens
         /// the collection every frame
         /// </summary>
         /// <returns></returns>
-        public List<Sprite> AccessSpritesForRenderingOnly()
+        internal List<Sprite> AccessSpritesForRenderingOnly()
         {
             return sprites;
         }
+        
     }
 }
