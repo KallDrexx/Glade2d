@@ -12,6 +12,10 @@ namespace Glade2d.Graphics
 {
     public class Renderer : MicroGraphics
     {
+        // Empty lists for null handling
+        private static readonly List<Sprite> EmptySpriteList = new();
+        private static readonly List<RenderRegion> EmptyRegionList = new();
+        
         internal const int BytesPerPixel = 2;
         private readonly TextureManager _textureManager;
         private readonly LayerManager _layerManager;
@@ -113,26 +117,39 @@ namespace Glade2d.Graphics
         /// <summary>
         /// Renders the current scene
         /// </summary>
-        public void Render(IReadOnlyList<Sprite> sprites)
+        public void Render(List<Sprite> sprites, List<RenderRegion> modifiedRegions)
         {
+            sprites ??= EmptySpriteList;
+            modifiedRegions ??= EmptyRegionList;
+            
             _profiler.StartTiming("Renderer.Render");
             _profiler.StartTiming("LayerManager.RenderBackgroundLayers");
             _layerManager.RenderBackgroundLayers((BufferRgb565)pixelBuffer);
             _profiler.StopTiming("LayerManager.RenderBackgroundLayers");
 
             _profiler.StartTiming("Renderer.DrawSprites");
-            sprites ??= Array.Empty<Sprite>();
-            for (var x = 0; x < sprites.Count; x++)
+            foreach (var sprite in sprites)
             {
                 // Use direct indexing instead of foreach for performance
                 // due to IEnumerable allocations.
-                DrawSprite(sprites[x]);
+                DrawSprite(sprite);
             }
+
             _profiler.StopTiming("Renderer.DrawSprites");
             
             _profiler.StartTiming("LayerManager.RenderForegroundLayers");
             _layerManager.RenderForegroundLayers((BufferRgb565)pixelBuffer);
             _profiler.StopTiming("LayerManager.RenderForegroundLayers");
+
+            foreach (var region in modifiedRegions)
+            {
+                DrawRectangle(
+                    region.X,
+                    region.Y,
+                    region.Width,
+                    region.Height,
+                    Color.Red);
+            }
            
             _profiler.StartTiming("Renderer.RenderToDisplay");
             RenderToDisplay();

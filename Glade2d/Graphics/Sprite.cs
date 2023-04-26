@@ -4,40 +4,20 @@ namespace Glade2d.Graphics
 {
     public class Sprite
     {
-        internal readonly record struct RegionChanges(SpriteRenderRegion? Old, SpriteRenderRegion? New);
-        
-        // True if the sprite had any changes which require a re-rendering
-        private bool _changeInRendering = true;
-        private bool _frameChanged = false;
-        private float _xPos, _yPos;
-        private Frame _currentFrame;
-        private SpriteRenderRegion? _lastRenderRegion;
+        internal readonly record struct RegionChanges(RenderRegion? Old, RenderRegion? New);
+
+        private Frame _lastFrame;
+        private RenderRegion? _lastRenderRegion;
 
         /// <summary>
         /// The X position of this object
         /// </summary>
-        public float X
-        {
-            get => _xPos;
-            set
-            {
-                _xPos = value;
-                _changeInRendering = true;
-            }
-        }
+        public float X { get; set; }
 
         /// <summary>
         /// The Y position of this object
         /// </summary>
-        public float Y
-        {
-            get => _yPos;
-            set
-            {
-                _yPos = value;
-                _changeInRendering = true;
-            }
-        }
+        public float Y { get; set; }
 
         /// <summary>
         /// The X velocity of this object in pixels per second
@@ -64,16 +44,7 @@ namespace Glade2d.Graphics
         /// <summary>
         /// The texture portion to use for this sprite
         /// </summary>
-        public Frame CurrentFrame
-        {
-            get => _currentFrame;
-            set
-            {
-                _currentFrame = value;
-                _changeInRendering = true;
-                _frameChanged = true;
-            }
-        }
+        public Frame CurrentFrame { get; set; }
 
         public Sprite() { }
         public Sprite(Frame frame)
@@ -123,32 +94,26 @@ namespace Glade2d.Graphics
         /// </summary>
         internal RegionChanges GetRenderRegionIfChanged()
         {
-            if (!_changeInRendering)
-            {
-                // No change
-                return new RegionChanges(_lastRenderRegion, null);
-            }
-
-            SpriteRenderRegion? newRegion = new SpriteRenderRegion(
-                (int)_xPos, 
-                (int)_yPos, 
-                _currentFrame.Width, 
-                _currentFrame.Width);
+            RenderRegion? newRegion = new RenderRegion(
+                (int)X, 
+                (int)Y, 
+                CurrentFrame.Width,
+                CurrentFrame.Height);
             
             // If the frame hasn't changed, and the new position is the same as
             // the old, then we can consider this unchanged. This can occur
             // if the sprite moves under a pixel.
-            if (!_frameChanged && newRegion.Value == _lastRenderRegion)
+            if (_lastFrame == CurrentFrame && newRegion.Value == _lastRenderRegion)
             {
                 newRegion = null;
             }
+            else
+            {
+                _lastRenderRegion = newRegion;
+            }
 
-            var result = new RegionChanges(_lastRenderRegion, newRegion);
-            _changeInRendering = false;
-            _frameChanged = false;
-            _lastRenderRegion = newRegion;
-
-            return result;
+            _lastFrame = CurrentFrame;
+            return new RegionChanges(_lastRenderRegion, newRegion);
         }
     }
 }

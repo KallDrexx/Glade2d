@@ -10,7 +10,7 @@ namespace Glade2d.Screens
         List<Sprite> sprites = new List<Sprite>();
         bool listSortNeeded = false;
 
-        internal List<SpriteRenderRegion> ModifiedRegions { get; } = new();
+        internal List<RenderRegion> ModifiedRegions { get; } = new();
 
         public Screen() { }
 

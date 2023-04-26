@@ -17,11 +17,21 @@ public class Layer
     private readonly BufferRgb565 _layerBuffer;
     private readonly TextureManager _textureManager;
     private Vector2 _internalOrigin;
-    
+    private Point _cameraOffset;
+    private bool _hasRenderChanges;
+
     /// <summary>
     /// How far the layer's origin (0,0) is offset from the camera's origin. 
     /// </summary>
-    public Point CameraOffset { get; set; }
+    public Point CameraOffset
+    {
+        get => _cameraOffset;
+        set
+        {
+            _cameraOffset = value;
+            _hasRenderChanges = true;
+        }
+    }
    
     /// <summary>
     /// The default background for this layer
@@ -83,6 +93,7 @@ public class Layer
     public void Clear()
     {
         _layerBuffer.Clear(BackgroundColor.Color16bppRgb565);
+        _hasRenderChanges = true;
     }
 
     /// <summary>
@@ -266,6 +277,8 @@ public class Layer
                 topLeft.Dimensions,
                 transparency));
         }
+
+        _hasRenderChanges = true;
     }
 
     /// <summary>
@@ -296,6 +309,8 @@ public class Layer
         while (_internalOrigin.X >= _layerBuffer.Width) _internalOrigin.X -= _layerBuffer.Width;
         while (_internalOrigin.Y < 0) _internalOrigin.Y += _layerBuffer.Height;
         while (_internalOrigin.Y >= _layerBuffer.Height) _internalOrigin.Y -= _layerBuffer.Height;
+
+        _hasRenderChanges = true;
     }
 
     /// <summary>
@@ -304,14 +319,15 @@ public class Layer
     /// first byte of the target buffer is assumed to be the camera's
     /// 0,0/origin.
     /// </summary>
-    internal void RenderToBuffer(BufferRgb565 target)
+    /// <returns></returns>
+    internal RenderRegion? RenderToBuffer(BufferRgb565 target)
     {
         // Don't render if our buffer is the same as the target. This is
         // essentially a "don't do anything with the sprite layer" 
         // condition.
         if (target == _layerBuffer)
         {
-            return;
+            return null;
         }
         
         // Figure out where the source buffer overlaps the camera. All this code
@@ -323,7 +339,7 @@ public class Layer
             CameraOffset.Y >= target.Height || // Layer is fully below the camera
             CameraOffset.X >= target.Width) // Layer is fully right of the camera
         {
-            return;
+            return null;
         }
         
         // We have four quadrants to draw from depending on how the internal origin
@@ -364,6 +380,7 @@ public class Layer
         PerformDraw(bottomLeft, target, new Point(bottomRight.Dimensions.Width));
         PerformDraw(topRight, target, new Point(0, bottomRight.Dimensions.Height));
         PerformDraw(topLeft, target, new Point(bottomRight.Dimensions.Width, bottomRight.Dimensions.Height));
+        
     }
 
     /// <summary>
