@@ -22,6 +22,7 @@ namespace Glade2d.Graphics
         private readonly Layer _spriteLayer;
         private readonly Profiler _profiler;
         private readonly IBufferTransferrer _bufferTransferrer;
+        private readonly byte[] _regionPixelBuffer;
         
         // We can't use the MicroGraphics `Rotation` property, as MicroGraphics
         // does a naive rotation that doesn't swap width and height. So we 
@@ -65,6 +66,7 @@ namespace Glade2d.Graphics
             _profiler = profiler;
             Scale = scale;
             _customRotation = rotation;
+            _regionPixelBuffer = new byte[base.display.PixelBuffer.Buffer.Length];
             
             // If we are rendering at a different resolution than our
             // device, or we are rotating our display, we need to create
@@ -159,6 +161,40 @@ namespace Glade2d.Graphics
 
         public override void Show()
         {
+            RenderFullScreen();
+        }
+
+        /// <summary>
+        /// Renders the contents of the internal buffer to the driver buffer and
+        /// then blits the driver buffer to the device
+        /// </summary>
+        /// <param name="modifiedRegions"></param>
+        private void RenderToDisplay(SortedSet<RenderRegion> modifiedRegions = null)
+        {
+            // draw the FPS counter
+            if (ShowPerf)
+            {
+                DrawRectangle(0, 0, Width, CurrentFont.Height, Color.Black, true);
+                DrawText(0, 0, $"{GameService.Instance.Time.FPS:n1}fps", Color.White);
+                modifiedRegions?.Add(new RenderRegion(0, 0, Width, CurrentFont.Height));
+            }
+
+            // send the driver buffer to device
+            if (modifiedRegions == null)
+            {
+                RenderFullScreen();
+            }
+            else
+            {
+                foreach (var region in modifiedRegions)
+                {
+                    Show(region.X, region.Y, region.X + region.Width, region.Y + region.Height);
+                }
+            }
+        }
+
+        private void RenderFullScreen()
+        {
             GameService.Instance.GameInstance.Profiler.StartTiming("Renderer.Show");
             if (pixelBuffer != display.PixelBuffer || Rotation != RotationType.Default)
             {
@@ -175,21 +211,25 @@ namespace Glade2d.Graphics
             GameService.Instance.GameInstance.Profiler.StopTiming("Renderer.Show");
         }
 
-        /// <summary>
-        /// Renders the contents of the internal buffer to the driver buffer and
-        /// then blits the driver buffer to the device
-        /// </summary>
-        private void RenderToDisplay()
+        private void RenderRegions(SortedSet<RenderRegion> modifiedRegions)
         {
-            // draw the FPS counter
-            if (ShowPerf)
+            foreach (var region in modifiedRegions)
             {
-                DrawRectangle(0, 0, Width, CurrentFont.Height, Color.Black, true);
-                DrawText(0, 0, $"{GameService.Instance.Time.FPS:n1}fps", Color.White);
+                RenderRegion(region);
             }
+        }
 
-            // send the driver buffer to device
-            Show();
+        private void RenderRegion(RenderRegion region)
+        {
+            var length = region.Width * region.Height * BytesPerPixel * Scale;
+            unsafe
+            {
+                fixed (byte* sourceStartPtr = pixelBuffer.Buffer)
+                fixed (byte* targetStartPtr = display.PixelBuffer.Buffer)
+                {
+                    
+                }
+            }
         }
         
         /// <summary>
