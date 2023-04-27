@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Meadow.Foundation.Graphics.Buffers;
 
 namespace Glade2d.Graphics.Layers;
@@ -46,26 +47,34 @@ public class LayerManager
     /// <summary>
     /// Renders all background layers to the specified buffer
     /// </summary>
-    internal void RenderBackgroundLayers(BufferRgb565 buffer)
+    internal void RenderBackgroundLayers(BufferRgb565 buffer, SortedSet<RenderRegion> modifiedRegions)
     {
         // Use the enumerator directly, to avoid garbage from IEnumerator
         var enumerator = _trackedLayers.BackgroundLayerEnumerator();
         while (enumerator.MoveNext())
         {
-            enumerator.Current.Layer.RenderToBuffer(buffer);
+            var region = enumerator.Current.Layer.RenderToBuffer(buffer);
+            if (region != null)
+            {
+                modifiedRegions.Add(region.Value);
+            }
         }
     }
 
     /// <summary>
     /// Renders all foreground layers to the specified buffer
     /// </summary>
-    internal void RenderForegroundLayers(BufferRgb565 buffer)
+    internal void RenderForegroundLayers(BufferRgb565 buffer, SortedSet<RenderRegion> modifiedRegions)
     {
         // Use the enumerator directly, to avoid garbage from IEnumerator
         var enumerator = _trackedLayers.ForegroundLayerEnumerator();
         while (enumerator.MoveNext())
         {
-            enumerator.Current.Layer.RenderToBuffer(buffer);
+            var region = enumerator.Current.Layer.RenderToBuffer(buffer);
+            if (region != null)
+            {
+                modifiedRegions.Add(region.Value);
+            }
         }
     }
 }

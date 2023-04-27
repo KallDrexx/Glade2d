@@ -127,11 +127,16 @@ public class Layer
     /// If true, all pixels from the buffer will be drawn, even if it matches the
     /// transparency color
     /// </param>
+    /// <param name="resetRenderFlag">
+    /// If false, drawing this texture will not consider this as modified. Should always
+    /// be true except for the sprite layer.
+    /// </param>
     public void DrawTexture(BufferRgb565 texture,
         Point topLeftOnTexture,
         Point topLeftOnLayer,
         Dimensions drawSize,
-        bool ignoreTransparency = false)
+        bool ignoreTransparency = false,
+        bool resetRenderFlag = true)
     {
         // The draw size and top left on layer needs to be adjusted to handle parts
         // of the texture that would end up off the layer.
@@ -251,7 +256,6 @@ public class Layer
                     drawSize.Width - horizontalOverdraw,
                     verticalOverdraw));
             
-            // Console.WriteLine($"TR: {topRight}");
             Drawing.ExecuteOperation(new Drawing.Operation(
                 texture,
                 _layerBuffer,
@@ -268,7 +272,6 @@ public class Layer
                 new Point(horizontalUnderDraw, verticalUnderDraw),
                 new Dimensions(horizontalOverdraw, verticalOverdraw));
             
-            // Console.WriteLine($"TL: {topLeft}");
             Drawing.ExecuteOperation(new Drawing.Operation(
                 texture,
                 _layerBuffer,
@@ -278,7 +281,10 @@ public class Layer
                 transparency));
         }
 
-        _hasRenderChanges = true;
+        if (resetRenderFlag)
+        {
+            _hasRenderChanges = true;
+        }
     }
 
     /// <summary>
@@ -310,7 +316,10 @@ public class Layer
         while (_internalOrigin.Y < 0) _internalOrigin.Y += _layerBuffer.Height;
         while (_internalOrigin.Y >= _layerBuffer.Height) _internalOrigin.Y -= _layerBuffer.Height;
 
-        _hasRenderChanges = true;
+        if (Math.Abs(shiftAmount.X) > float.Epsilon || Math.Abs(shiftAmount.Y) > float.Epsilon)
+        {
+            _hasRenderChanges = true;
+        }
     }
 
     /// <summary>
@@ -380,7 +389,25 @@ public class Layer
         PerformDraw(bottomLeft, target, new Point(bottomRight.Dimensions.Width));
         PerformDraw(topRight, target, new Point(0, bottomRight.Dimensions.Height));
         PerformDraw(topLeft, target, new Point(bottomRight.Dimensions.Width, bottomRight.Dimensions.Height));
-        
+
+        if (!_hasRenderChanges)
+        {
+            // Since we haven't changed since last frame, no need to provide a region
+            // that needs to be re-rendered. We still needed to draw to the target
+            // buffer though in case a sprite or something else with transparency
+            // does need to be redrawn on top of this area.
+            return null;
+        }
+
+        var startX = Math.Max(CameraOffset.X, 0);
+        var startY = Math.Max(CameraOffset.Y, 0);
+        var endX = Math.Min(CameraOffset.X + Width, target.Width);
+        var endY = Math.Min(CameraOffset.Y + Height, target.Height);
+        var width = endX - startX;
+        var height = endY - startY;
+
+        _hasRenderChanges = false; 
+        return new RenderRegion(startX, startY, width, height);
     }
 
     /// <summary>

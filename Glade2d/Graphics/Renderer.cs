@@ -14,7 +14,7 @@ namespace Glade2d.Graphics
     {
         // Empty lists for null handling
         private static readonly List<Sprite> EmptySpriteList = new();
-        private static readonly List<RenderRegion> EmptyRegionList = new();
+        private static readonly SortedSet<RenderRegion> EmptyRegionList = new();
         
         internal const int BytesPerPixel = 2;
         private readonly TextureManager _textureManager;
@@ -117,14 +117,14 @@ namespace Glade2d.Graphics
         /// <summary>
         /// Renders the current scene
         /// </summary>
-        public void Render(List<Sprite> sprites, List<RenderRegion> modifiedRegions)
+        public void Render(List<Sprite> sprites, SortedSet<RenderRegion> modifiedRegions)
         {
             sprites ??= EmptySpriteList;
             modifiedRegions ??= EmptyRegionList;
             
             _profiler.StartTiming("Renderer.Render");
             _profiler.StartTiming("LayerManager.RenderBackgroundLayers");
-            _layerManager.RenderBackgroundLayers((BufferRgb565)pixelBuffer);
+            _layerManager.RenderBackgroundLayers((BufferRgb565)pixelBuffer, modifiedRegions);
             _profiler.StopTiming("LayerManager.RenderBackgroundLayers");
 
             _profiler.StartTiming("Renderer.DrawSprites");
@@ -138,7 +138,7 @@ namespace Glade2d.Graphics
             _profiler.StopTiming("Renderer.DrawSprites");
             
             _profiler.StartTiming("LayerManager.RenderForegroundLayers");
-            _layerManager.RenderForegroundLayers((BufferRgb565)pixelBuffer);
+            _layerManager.RenderForegroundLayers((BufferRgb565)pixelBuffer, modifiedRegions);
             _profiler.StopTiming("LayerManager.RenderForegroundLayers");
 
             foreach (var region in modifiedRegions)
@@ -205,7 +205,12 @@ namespace Glade2d.Graphics
                 var dimensions = new Dimensions(sprite.CurrentFrame.Width, sprite.CurrentFrame.Height);
 
                 var texture = _textureManager.GetTexture(sprite.CurrentFrame.TextureName);
-                _spriteLayer.DrawTexture(texture, textureOrigin, spriteOrigin, dimensions);
+                _spriteLayer.DrawTexture(
+                    texture, 
+                    textureOrigin, 
+                    spriteOrigin, 
+                    dimensions,
+                    resetRenderFlag: false);
             }
         }
 
