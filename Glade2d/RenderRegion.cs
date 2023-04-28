@@ -8,11 +8,11 @@ internal class RenderRegionComparer : IComparer<RenderRegion>
 {
     public int Compare(RenderRegion x, RenderRegion y)
     {
-        var xComparison = x.X.CompareTo(y.X);
-        if (xComparison != 0) return xComparison;
-        
         var yComparison = x.Y.CompareTo(y.Y);
         if (yComparison != 0) return yComparison;
+        
+        var xComparison = x.X.CompareTo(y.X);
+        if (xComparison != 0) return xComparison;
         
         var widthComparison = x.Width.CompareTo(y.Width);
         

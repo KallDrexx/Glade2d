@@ -154,7 +154,7 @@ namespace Glade2d.Graphics
             }
            
             _profiler.StartTiming("Renderer.RenderToDisplay");
-            RenderToDisplay();
+            RenderToDisplay(modifiedRegions);
             _profiler.StopTiming("Renderer.RenderToDisplay");
             _profiler.StartTiming("Renderer.Render");
         }
@@ -186,10 +186,15 @@ namespace Glade2d.Graphics
             }
             else
             {
+                var sourceBuffer = (BufferRgb565)pixelBuffer;
+                var targetBuffer = (BufferRgb565)display.PixelBuffer;
+                display.Clear();
                 foreach (var region in modifiedRegions)
                 {
-                    Show(region.X, region.Y, region.X + region.Width, region.Y + region.Height);
+                    _bufferTransferrer.Transfer(sourceBuffer, targetBuffer, Scale, region);
                 }
+                
+                base.Show();
             }
         }
 
