@@ -8,6 +8,7 @@
         <OutputType>Library</OutputType>
         <AssemblyName>App</AssemblyName>
         <LangVersion>10.0</LangVersion>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
     <ItemGroup>

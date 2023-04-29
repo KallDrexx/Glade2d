@@ -5,7 +5,7 @@ namespace Glade2d.Graphics.BufferTransferring;
 
 internal class NoRotationBufferTransferrer : IBufferTransferrer
 {
-    public void Transfer(BufferRgb565 source, BufferRgb565 target, int scale, RenderRegion? region)
+    public RenderRegion? Transfer(BufferRgb565 source, BufferRgb565 target, int scale, RenderRegion? region)
     {
         if (source.Width * scale != target.Width || source.Height * scale != target.Height)
         {
@@ -16,10 +16,10 @@ internal class NoRotationBufferTransferrer : IBufferTransferrer
             throw new InvalidOperationException(message);
         }
         
-        TransferBuffer(source, target, scale, region);
+        return TransferBuffer(source, target, scale, region);
     }
 
-    private static unsafe void TransferBuffer(BufferRgb565 source, BufferRgb565 target, int scale, RenderRegion? region)
+    private static unsafe RenderRegion TransferBuffer(BufferRgb565 source, BufferRgb565 target, int scale, RenderRegion? region)
     {
         var sourceWidth = region?.Width ?? source.Width;
         var sourceHeight = region?.Height ?? source.Height;
@@ -69,5 +69,11 @@ internal class NoRotationBufferTransferrer : IBufferTransferrer
                 }
             }
         }
+
+        return new RenderRegion(
+            startCol * scale,
+            sourceRowStartIndex * scale,
+            sourceWidth * scale,
+            sourceHeight * scale);
     }
 }

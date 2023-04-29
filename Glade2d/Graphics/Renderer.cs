@@ -106,6 +106,9 @@ namespace Glade2d.Graphics
                 RotationType._270Degrees => new Rotation270BufferTransferrer(),
                 _ => throw new NotImplementedException($"Rotation type of {rotation} not implemented"),
             };
+            
+            Console.WriteLine($"Pixel color mode: {pixelBuffer.ColorMode}");
+            Console.WriteLine($"Display color mode: {display.ColorMode}");
         }
 
         public void Reset()
@@ -167,7 +170,7 @@ namespace Glade2d.Graphics
             {
                 DrawRectangle(0, 0, 35, CurrentFont.Height, Color.Black, true);
                 DrawText(0, 0, $"{GameService.Instance.Time.FPS:n1}fps", Color.White);
-                modifiedRegions?.Add(new RenderRegion(0, 0, Width, CurrentFont.Height));
+                modifiedRegions?.Add(new RenderRegion(0, 0, 35, CurrentFont.Height));
             }
 
             // send the driver buffer to device
@@ -181,6 +184,7 @@ namespace Glade2d.Graphics
                 var targetBuffer = (BufferRgb565)display.PixelBuffer;
                 foreach (var region in modifiedRegions)
                 {
+                    _profiler.StartTiming("single region handling");
                     // Make sure the region is constrained to the pixel buffer
                     var startX = Math.Max(region.X, 0);
                     var startY = Math.Max(region.Y, 0);
@@ -193,10 +197,26 @@ namespace Glade2d.Graphics
                     }
 
                     var canvasRegion = new RenderRegion(startX, startY, endX - startX, endY - startY);
-                    _bufferTransferrer.Transfer(sourceBuffer, targetBuffer, Scale, canvasRegion);
+                    
+                    _profiler.StartTiming("single region transfer");
+                    var renderRegion = _bufferTransferrer.Transfer(sourceBuffer, targetBuffer, Scale, canvasRegion);
+                    _profiler.StopTiming("single region transfer");
+
+                    if (renderRegion != null)
+                    {
+                        _profiler.StartTiming("single region show");
+                        var gladeDisplay = (IGladeDisplay)display;
+                        gladeDisplay.WriteSection(
+                            renderRegion.Value.X,
+                            renderRegion.Value.Y,
+                            renderRegion.Value.X + renderRegion.Value.Width,
+                            renderRegion.Value.Y + renderRegion.Value.Height);
+                        _profiler.StopTiming("single region show");
+                    }
+                    _profiler.StopTiming("single region handling");
                 }
                 
-                base.Show();
+                // base.Show();
             }
         }
 

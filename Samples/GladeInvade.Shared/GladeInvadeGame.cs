@@ -10,7 +10,7 @@ public static class GladeInvadeGame
     public static void Run(Game engine)
     {
         engine.Renderer.BackgroundColor = new Color(0, 0, 0);
-        engine.Renderer.ShowPerf = true;
+        engine.Renderer.ShowPerf = false;
 
         LogService.Log.Trace("Running game...");
         engine.Profiler.IsActive = true;

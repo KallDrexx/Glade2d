@@ -7,5 +7,5 @@ namespace Glade2d.Graphics.BufferTransferring;
 /// </summary>
 internal interface IBufferTransferrer
 {
-    void Transfer(BufferRgb565 source, BufferRgb565 target, int scale, RenderRegion? region = null);
+    RenderRegion? Transfer(BufferRgb565 source, BufferRgb565 target, int scale, RenderRegion? region = null);
 }

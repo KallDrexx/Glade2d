@@ -5,7 +5,7 @@ namespace Glade2d.Graphics.BufferTransferring;
 
 public class Rotation90BufferTransferrer : IBufferTransferrer
 {
-    public void Transfer(BufferRgb565 source, BufferRgb565 target, int scale, RenderRegion? region)
+    public RenderRegion? Transfer(BufferRgb565 source, BufferRgb565 target, int scale, RenderRegion? region)
     {
         var sourceWidth = source.Width;
         var sourceHeight = source.Height;
@@ -74,5 +74,7 @@ public class Rotation90BufferTransferrer : IBufferTransferrer
                 }
             }
         }
+
+        return null;
     }
 }
