@@ -24,7 +24,7 @@ public class GameScreen : Screen
     private readonly TimeSpan _timePerEnemyAnimationFrame = TimeSpan.FromSeconds(1);
     private readonly TimeSpan _explosionLifetime = TimeSpan.FromSeconds(0.5);
     private DateTime _lastEnemyAnimationAt;
-    private float _normalEnemyHorizontalVelocity = 10;
+    private float _normalEnemyHorizontalVelocity = 5;
     private bool _lastHitLeftBorder = true;
 
     public GameScreen()
@@ -139,7 +139,7 @@ public class GameScreen : Screen
 
         if (borderHit)
         {
-            _normalEnemyHorizontalVelocity += 5;
+            // _normalEnemyHorizontalVelocity += 5;
             _normalEnemyHorizontalVelocity *= -1;
             foreach (var enemy in _enemies)
             {

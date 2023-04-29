@@ -182,6 +182,7 @@ namespace Glade2d.Graphics
             {
                 var sourceBuffer = (BufferRgb565)pixelBuffer;
                 var targetBuffer = (BufferRgb565)display.PixelBuffer;
+                _profiler.StartTiming($"Render {modifiedRegions.Count} regions");
                 foreach (var region in modifiedRegions)
                 {
                     _profiler.StartTiming("single region handling");
@@ -215,8 +216,7 @@ namespace Glade2d.Graphics
                     }
                     _profiler.StopTiming("single region handling");
                 }
-                
-                // base.Show();
+                _profiler.StopTiming($"Render {modifiedRegions.Count} regions");
             }
         }
 

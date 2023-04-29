@@ -27,6 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\Glade2d.Displays\Glade2d.Displays.csproj" />
       <ProjectReference Include="..\..\Glade2d\Glade2d.csproj" />
       <ProjectReference Include="..\GladeInvade.Shared\GladeInvade.Shared.csproj" />
     </ItemGroup>

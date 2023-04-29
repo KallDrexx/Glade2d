@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Glade2d\Glade2d.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="MeadowMgTestEnvironment" Version="1.3.0" />
+    </ItemGroup>
+
+</Project>

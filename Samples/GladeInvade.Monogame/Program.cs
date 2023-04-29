@@ -1,4 +1,5 @@
 ﻿using Glade2d;
+using Glade2d.Monogame;
 using GladeInvade.Shared;
 using MeadowMgTestEnvironment;
 using Microsoft.Xna.Framework.Input;
@@ -13,5 +14,7 @@ var inputs = new GameInputs
     Action = environment.CreatePortForKey(Keys.Up),
 };
 
-engine.Initialize(environment.Display, inputs, 2, contentRoot: Environment.CurrentDirectory);
+var display = new MonogameGladeDisplay(environment.Display);
+
+engine.Initialize(display, inputs, 2, contentRoot: Environment.CurrentDirectory);
 GladeInvadeGame.Run(engine);

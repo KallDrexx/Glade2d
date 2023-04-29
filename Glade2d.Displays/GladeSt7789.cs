@@ -4,7 +4,7 @@ using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 
-namespace GladeInvade.ProjectLab;
+namespace Glade2d.Displays;
 
 public class GladeSt7789 : St7789, IGladeDisplay
 {
@@ -60,7 +60,7 @@ public class GladeSt7789 : St7789, IGladeDisplay
                               row * bytesPerFullRow +
                               left * BytesPerPixel;
 
-            var targetStart = row * BytesPerPixel;
+            var targetStart = row * bytesPerSectionRow;
 
             Array.Copy(PixelBuffer.Buffer,
                 sourceStart,
@@ -84,34 +84,31 @@ public class GladeSt7789 : St7789, IGladeDisplay
 
     protected override void SetAddressWindow(int x0, int y0, int x1, int y1)
     {
-        // x0 += xOffset;
-        // y0 += yOffset;
-        //
-        // x1 += xOffset;
-        // y1 += yOffset;
-
+        var profiler = GameService.Instance?.GameInstance?.Profiler;
+        profiler?.StartTiming("SetAddressWindow.CasetCmd");
         SendCommand(LcdCommand.CASET);  // column addr set
+        profiler?.StopTiming("SetAddressWindow.CasetCmd");
+        
+        profiler?.StartTiming("SetAddressWindow.CasetData");
+        profiler?.StartTiming("SetAddressWindow.Port Enable");
         dataCommandPort.State = Data;
-        var dataPart1 = new byte[]
+        profiler?.StopTiming("SetAddressWindow.Port Enable");
+        var dataPart1 = new[]
         {
             (byte)(x0 >> 8),
             (byte)(x0 & 0xff),
             (byte)(x1 >> 8),
             (byte)(x1 & 0xff),
         };
-        
-        Write(dataPart1);
-        // Write((byte)(x0 >> 8));
-        // Write((byte)(x0 & 0xff));   // XSTART 
-        // Write((byte)(x1 >> 8));
-        // Write((byte)(x1 & 0xff));   // XEND
+       
+        spiDisplay.Bus.Write(chipSelectPort, dataPart1);
+        profiler?.StopTiming("SetAddressWindow.CasetData");
 
+        profiler?.StartTiming("SetAddressWindow.RasetCmd");
         SendCommand(LcdCommand.RASET);  // row addr set
+        profiler?.StopTiming("SetAddressWindow.RasetCmd");
+        profiler?.StartTiming("SetAddressWindow.RasetData");
         dataCommandPort.State = Data;
-        // Write((byte)(y0 >> 8));
-        // Write((byte)(y0 & 0xff));    // YSTART
-        // Write((byte)(y1 >> 8));
-        // Write((byte)(y1 & 0xff));    // YEND
         var dataPart2 = new byte[]
         {
             (byte)(y0 >> 8),
@@ -119,8 +116,11 @@ public class GladeSt7789 : St7789, IGladeDisplay
             (byte)(y1 >> 8),
             (byte)(y1 & 0xff),
         };
-        Write(dataPart2);
+        spiDisplay.Bus.Write(chipSelectPort, dataPart2);
+        profiler?.StartTiming("SetAddressWindow.RasetData");
 
+        profiler?.StartTiming("SetAddressWindow.Ramwr");
         SendCommand(LcdCommand.RAMWR);  // write to RAM
+        profiler?.StopTiming("SetAddressWindow.Ramwr");
     }
 }

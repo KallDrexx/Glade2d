@@ -1,10 +1,10 @@
 ﻿using Glade2d;
+using Glade2d.Displays;
 using Glade2d.Input;
 using Glade2d.Services;
 using GladeInvade.Shared;
 using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Foundation.Sensors.Buttons;
