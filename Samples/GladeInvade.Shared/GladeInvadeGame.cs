@@ -7,11 +7,11 @@ namespace GladeInvade.Shared;
 
 public static class GladeInvadeGame
 {
-    public static void Run(Game engine)
+    public static void Run(Game engine, IScoreBoard scoreBoard)
     {
         engine.Renderer.BackgroundColor = GameConstants.BackgroundColor;
 
         LogService.Log.Trace("Running game...");
-        engine.Start(() => new TitleScreen());
+		engine.Start(new TitleScreen(scoreBoard));
     }
 }

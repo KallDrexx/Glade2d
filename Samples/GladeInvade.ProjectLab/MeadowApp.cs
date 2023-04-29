@@ -28,14 +28,14 @@ public class MeadowApp : App<F7FeatherV2>
         Console.WriteLine("Testing output");
         var ht16k33 = new Ht16k33(_projectLab.I2cBus, 0x70);
         var scoreboard = new Ht16k33LedScoreboard(ht16k33);
-        scoreboard.SetDisplay("1234");
+        // scoreboard.SetDisplay("1234");
 
         LogService.Log.Trace("Initializing Glade game engine...");
         var glade = new Game();
         glade.Initialize(_display, 2, EngineMode.GameLoop);
         InitializeInput(glade.InputManager);
         
-        GladeInvadeGame.Run(glade);
+        GladeInvadeGame.Run(glade, scoreboard);
         
         return base.Run();
     }

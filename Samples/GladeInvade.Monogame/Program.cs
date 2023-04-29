@@ -14,4 +14,4 @@ var inputs = new GameInputs
 };
 
 engine.Initialize(environment.Display, inputs, 2, contentRoot: Environment.CurrentDirectory);
-GladeInvadeGame.Run(engine);
+GladeInvadeGame.Run(engine, new NullScoreBoard());

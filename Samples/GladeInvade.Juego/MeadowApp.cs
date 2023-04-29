@@ -33,7 +33,7 @@ public class MeadowApp : App<Meadow.Devices.F7CoreComputeV2>
         SetupInputs(engine.InputManager);
         engine.Initialize(_display, 2, displayRotation: RotationType._270Degrees);
 
-        GladeInvadeGame.Run(engine);
+        GladeInvadeGame.Run(engine, new NullScoreBoard());
 
         return base.Run();
     }
