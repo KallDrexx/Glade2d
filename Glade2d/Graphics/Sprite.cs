@@ -99,6 +99,8 @@ namespace Glade2d.Graphics
                 (int)Y, 
                 CurrentFrame.Width,
                 CurrentFrame.Height);
+
+            var previouslyLastRegion = _lastRenderRegion;
             
             // If the frame hasn't changed, and the new position is the same as
             // the old, then we can consider this unchanged. This can occur
@@ -113,7 +115,7 @@ namespace Glade2d.Graphics
             }
 
             _lastFrame = CurrentFrame;
-            return new RegionChanges(_lastRenderRegion, newRegion);
+            return new RegionChanges(previouslyLastRegion, newRegion);
         }
     }
 }

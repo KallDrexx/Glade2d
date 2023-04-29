@@ -112,7 +112,14 @@ namespace Glade2d.Screens
             {
                 sprites.Remove(sprite);
             }
+
+            var oldRenderRegion = sprite.GetRenderRegionIfChanged().Old;
+            if (oldRenderRegion != null)
+            {
+                ModifiedRegions.Add(oldRenderRegion.Value);
+            }
         }
+        
         protected void RemoveSprite(int index)
         {
             LogService.Log.Trace("Removing sprite from scene graph");

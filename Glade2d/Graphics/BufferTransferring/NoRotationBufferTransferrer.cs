@@ -32,7 +32,7 @@ internal class NoRotationBufferTransferrer : IBufferTransferrer
         fixed (byte* sourceBufferPtr = source.Buffer)
         fixed (byte* targetBufferPtr = target.Buffer)
         {
-            for (var sourceRow = sourceRowStartIndex; sourceRow < sourceHeight; sourceRow++)
+            for (var sourceRow = sourceRowStartIndex; sourceRow < sourceRowStartIndex + sourceHeight; sourceRow++)
             {
                 var sourceByte1 = sourceBufferPtr + 
                                   sourceRow * sourceRowByteLength +
@@ -44,7 +44,7 @@ internal class NoRotationBufferTransferrer : IBufferTransferrer
 
                 var arrayCopyStartIndex = (int)(targetByte1 - targetBufferPtr);
                 
-                for (var sourceCol = startCol; sourceCol < sourceWidth; sourceCol++)
+                for (var sourceCol = startCol; sourceCol < startCol + sourceWidth; sourceCol++)
                 {
                     for (var scaleX = 0; scaleX < scale; scaleX++)
                     {
@@ -64,7 +64,7 @@ internal class NoRotationBufferTransferrer : IBufferTransferrer
                         target.Buffer,
                         arrayCopyStartIndex,
                         target.Buffer,
-                        arrayCopyStartIndex + targetRegionByteLength,
+                        arrayCopyStartIndex + targetRowByteLength,
                         targetRegionByteLength);
                 }
             }

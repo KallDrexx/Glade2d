@@ -119,7 +119,7 @@ namespace Glade2d.Graphics
         /// <summary>
         /// Renders the current scene
         /// </summary>
-        public void Render(List<Sprite> sprites, SortedSet<RenderRegion> modifiedRegions)
+        public void Render(List<Sprite> sprites, SortedSet<RenderRegion> modifiedRegions, bool renderFullScreen)
         {
             sprites ??= EmptySpriteList;
             modifiedRegions ??= EmptyRegionList;
@@ -143,18 +143,8 @@ namespace Glade2d.Graphics
             _layerManager.RenderForegroundLayers((BufferRgb565)pixelBuffer, modifiedRegions);
             _profiler.StopTiming("LayerManager.RenderForegroundLayers");
 
-            foreach (var region in modifiedRegions)
-            {
-                DrawRectangle(
-                    region.X,
-                    region.Y,
-                    region.Width,
-                    region.Height,
-                    Color.Red);
-            }
-           
             _profiler.StartTiming("Renderer.RenderToDisplay");
-            RenderToDisplay(modifiedRegions);
+            RenderToDisplay(modifiedRegions, renderFullScreen);
             _profiler.StopTiming("Renderer.RenderToDisplay");
             _profiler.StartTiming("Renderer.Render");
         }
@@ -169,18 +159,19 @@ namespace Glade2d.Graphics
         /// then blits the driver buffer to the device
         /// </summary>
         /// <param name="modifiedRegions"></param>
-        private void RenderToDisplay(SortedSet<RenderRegion> modifiedRegions = null)
+        /// <param name="renderFullScreen"></param>
+        private void RenderToDisplay(SortedSet<RenderRegion> modifiedRegions, bool renderFullScreen)
         {
             // draw the FPS counter
             if (ShowPerf)
             {
-                DrawRectangle(0, 0, Width, CurrentFont.Height, Color.Black, true);
+                DrawRectangle(0, 0, 35, CurrentFont.Height, Color.Black, true);
                 DrawText(0, 0, $"{GameService.Instance.Time.FPS:n1}fps", Color.White);
                 modifiedRegions?.Add(new RenderRegion(0, 0, Width, CurrentFont.Height));
             }
 
             // send the driver buffer to device
-            if (modifiedRegions == null)
+            if (modifiedRegions == null || renderFullScreen)
             {
                 RenderFullScreen();
             }
@@ -188,10 +179,21 @@ namespace Glade2d.Graphics
             {
                 var sourceBuffer = (BufferRgb565)pixelBuffer;
                 var targetBuffer = (BufferRgb565)display.PixelBuffer;
-                display.Clear();
                 foreach (var region in modifiedRegions)
                 {
-                    _bufferTransferrer.Transfer(sourceBuffer, targetBuffer, Scale, region);
+                    // Make sure the region is constrained to the pixel buffer
+                    var startX = Math.Max(region.X, 0);
+                    var startY = Math.Max(region.Y, 0);
+                    var endX = Math.Min(region.X + region.Width, pixelBuffer.Width);
+                    var endY = Math.Min(region.Y + region.Height, pixelBuffer.Height);
+                    if (endX <= startX || endY <= startY)
+                    {
+                        // Off buffer
+                        continue;
+                    }
+
+                    var canvasRegion = new RenderRegion(startX, startY, endX - startX, endY - startY);
+                    _bufferTransferrer.Transfer(sourceBuffer, targetBuffer, Scale, canvasRegion);
                 }
                 
                 base.Show();
@@ -216,27 +218,6 @@ namespace Glade2d.Graphics
             GameService.Instance.GameInstance.Profiler.StopTiming("Renderer.Show");
         }
 
-        private void RenderRegions(SortedSet<RenderRegion> modifiedRegions)
-        {
-            foreach (var region in modifiedRegions)
-            {
-                RenderRegion(region);
-            }
-        }
-
-        private void RenderRegion(RenderRegion region)
-        {
-            var length = region.Width * region.Height * BytesPerPixel * Scale;
-            unsafe
-            {
-                fixed (byte* sourceStartPtr = pixelBuffer.Buffer)
-                fixed (byte* targetStartPtr = display.PixelBuffer.Buffer)
-                {
-                    
-                }
-            }
-        }
-        
         /// <summary>
         /// Draws a sprite's CurrentFrame into the graphics buffer
         /// </summary>

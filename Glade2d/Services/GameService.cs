@@ -6,6 +6,8 @@ namespace Glade2d.Services
 {
     public class GameService
     {
+        private Screen _currentScreen;
+        
         static GameService instance;
 
         public static GameService Instance
@@ -22,11 +24,21 @@ namespace Glade2d.Services
 
         public GameTime Time { get; private set; }
 
-        public Screen CurrentScreen { get; set; } = new Screen();
+        public Screen CurrentScreen
+        {
+            get => _currentScreen;
+            set
+            {
+                _currentScreen = value;
+                ScreenChanged = true;
+            }
+        }
 
         public Random Random { get; set; } = new Random();
 
         public Game GameInstance { get; set; }
+
+        internal bool ScreenChanged { get; set; } = true;
 
         private GameService() { }
 

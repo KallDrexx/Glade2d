@@ -151,8 +151,11 @@ namespace Glade2d
 
             var sprites = GameService.Instance.CurrentScreen?.AccessSpritesForRenderingOnly();
             var regions = GameService.Instance.CurrentScreen?.ModifiedRegions;
-            
-            Renderer.Render(sprites, regions);
+
+            var renderFullScreen = GameService.Instance.ScreenChanged;
+            Renderer.Render(sprites, regions, renderFullScreen);
+
+            GameService.Instance.ScreenChanged = false;
         }
     }
 }
