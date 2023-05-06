@@ -18,15 +18,17 @@ namespace GladeInvade.Shared.Screens
         const int ScreenEdgePadding = 4;
 
         readonly int _screenHeight, _screenWidth;
+        private readonly IScoreBoard _scoreBoard;
         Layer _mainTextLayer, _inputPromptLayer;
         double _secondsUntilInputEnabled = SecondsToIgnoreInput;
         readonly Game _game;
 
-        public EndgameScreen()
+        public EndgameScreen(IScoreBoard scoreBoard)
         {
             _game = GameService.Instance.GameInstance;
             _screenHeight = _game.Renderer.Height;
             _screenWidth =  _game.Renderer.Width;
+            _scoreBoard = scoreBoard;
 
             CreateTextLayers();
         }
@@ -56,7 +58,7 @@ namespace GladeInvade.Shared.Screens
         {
             if(_game.InputManager.GetButtonState(nameof(GameInputs.ActionButton)) == ButtonState.Pressed)
             {
-                _game.TransitionToScreen(() => new TitleScreen());
+                _game.TransitionToScreen(() => new TitleScreen(_scoreBoard));
             }
         }
 

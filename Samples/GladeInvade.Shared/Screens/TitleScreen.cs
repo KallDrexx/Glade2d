@@ -16,12 +16,14 @@ public class TitleScreen : Screen
     private readonly int _screenHeight, _screenWidth;
     private readonly Game _engine = GameService.Instance.GameInstance;
     private readonly GameTitleDisplay _gameTitle;
+    private readonly IScoreBoard _scoreBoard;
     private Layer _inputPromptLayer;
     
-    public TitleScreen()
+    public TitleScreen(IScoreBoard scoreBoard)
     {
         _screenHeight = GameService.Instance.GameInstance.Renderer.Height;
         _screenWidth = GameService.Instance.GameInstance.Renderer.Width;
+        _scoreBoard = scoreBoard;
 
         _gameTitle = new GameTitleDisplay
         {
@@ -34,6 +36,7 @@ public class TitleScreen : Screen
         AddSprite(_gameTitle);
 
         CreateTextLayers();
+        _scoreBoard.SetDisplay("----");
 
         LogService.Log.Info("Started title screen.");
     }
@@ -46,7 +49,7 @@ public class TitleScreen : Screen
             ProgressionService.Instance.Restart();
 
             // launch the game screen
-            GameService.Instance.GameInstance.TransitionToScreen(() => new GameScreen());
+            GameService.Instance.GameInstance.TransitionToScreen(() => new GameScreen(_scoreBoard));
         }
 
         if (_gameTitle.X < 5 || _gameTitle.X + _gameTitle.CurrentFrame.Width > _screenWidth - 5)

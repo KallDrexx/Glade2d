@@ -42,6 +42,7 @@ public class GameScreen : Screen
     private readonly List<Explosion> _explosions = new();
     private readonly TimeSpan _timePerEnemyAnimationFrame = TimeSpan.FromSeconds(1);
     private readonly TimeSpan _explosionLifetime = TimeSpan.FromSeconds(0.5);
+    private readonly IScoreBoard _scoreBoard;
     private DateTime _lastEnemyAnimationAt;
     private float _normalEnemyHorizontalVelocity = 0;
     private bool _lastHitLeftBorder = true;
@@ -51,13 +52,14 @@ public class GameScreen : Screen
     private IFont _toastFont;
     private double _timeToNextStateChange;
 
-    public GameScreen()
+    public GameScreen(IScoreBoard scoreBoard)
     {
         _game = GameService.Instance.GameInstance;
         _screenHeight = _game.Renderer.Height;
         _screenWidth = _game.Renderer.Width;
         _normalEnemyHorizontalVelocity = ProgressionService.Instance.CurrentEnemySpeed;
         _toastFont = new Font8x12();
+        _scoreBoard = scoreBoard;
 
         CreateTextLayers();
         CreateLivesIndicator();
@@ -177,11 +179,11 @@ public class GameScreen : Screen
             if(endgameType == EndgameResult.CompletedLevel)
             {
                 ProgressionService.Instance.IncreaseDifficultyLevel();
-                _game.TransitionToScreen(() => new GameScreen());
+                _game.TransitionToScreen(() => new GameScreen(_scoreBoard));
             }
             else
             {
-                _game.TransitionToScreen(() => new EndgameScreen());
+                _game.TransitionToScreen(() => new EndgameScreen(_scoreBoard));
             }
         }
     }
@@ -468,6 +470,8 @@ public class GameScreen : Screen
             position: new Point(_screenWidth / 2, 4),
             text: ProgressionService.Instance.CurrentLevel.ToString(),
             color: GameConstants.WhiteTextColor);
+        
+        _scoreBoard.SetDisplay(ProgressionService.Instance.Score.ToString("####").PadLeft(4));
     }
     void UpdateToastText(string text)
     {
