@@ -66,7 +66,7 @@ public class LayerManager
     /// <summary>
     /// Retrieves the background layers in order
     /// </summary>
-    internal LayerEnumerator BackgroundLayerEnumerator()
+    public LayerEnumerator BackgroundLayerEnumerator()
     {
         return new LayerEnumerator(_trackedLayers.BackgroundLayerEnumerator());
     }
@@ -75,18 +75,18 @@ public class LayerManager
     /// Retrieves the foreground layers in order
     /// </summary>
     /// <returns></returns>
-    internal LayerEnumerator ForegroundLayerEnumerator()
+    public LayerEnumerator ForegroundLayerEnumerator()
     {
         return new LayerEnumerator(_trackedLayers.ForegroundLayerEnumerator());
     }
 
-    internal struct LayerEnumerator : IEnumerator<ILayer>
+    public struct LayerEnumerator : IEnumerator<ILayer>
     {
         private SortedSet<TrackedLayers.TrackedLayer>.Enumerator _inner;
         public ILayer Current => _inner.Current.Layer;
         object IEnumerator.Current => Current;
         
-        public LayerEnumerator(SortedSet<TrackedLayers.TrackedLayer>.Enumerator inner)
+        internal LayerEnumerator(SortedSet<TrackedLayers.TrackedLayer>.Enumerator inner)
         {
             _inner = inner;
         }
