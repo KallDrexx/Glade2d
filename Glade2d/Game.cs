@@ -3,6 +3,7 @@ using Glade2d.Graphics;
 using Glade2d.Screens;
 using Glade2d.Services;
 using System.Threading;
+using System.Threading.Tasks;
 using Glade2d.Input;
 using Glade2d.Profiling;
 
@@ -73,7 +74,7 @@ namespace Glade2d
             gameInput.SetupInput(InputManager);
         }
 
-        public void Start(Func<Screen> firstScreenGenerator = null)
+        public async ValueTask Start(Func<Screen> firstScreenGenerator = null)
         {
             GameService.Instance.Initialize();
             TransitionToScreen(firstScreenGenerator);
@@ -84,7 +85,7 @@ namespace Glade2d
             {
                 while (true)
                 {
-                    Tick();
+                    await Tick();
                     Thread.Sleep(SleepMilliseconds);
                 }
             }
@@ -112,7 +113,7 @@ namespace Glade2d
         /// This method can be called manually to tick
         /// the engine in RenderOnDemand mode
         /// </summary>
-        public void Tick()
+        public async ValueTask Tick()
         {
             InputManager.Tick();
             Profiler.StartTiming("Game.Update");
@@ -120,7 +121,7 @@ namespace Glade2d
             Profiler.StopTiming("Game.Update");
             
             Profiler.StartTiming("Game.Draw");
-            Draw();
+            await Draw();
             Profiler.StopTiming("Game.Draw");
             
             Profiler.WriteReport();
@@ -141,10 +142,10 @@ namespace Glade2d
         /// buffer and then blits the buffer to the hardware
         /// display
         /// </summary>
-        public void Draw()
+        public async ValueTask Draw()
         {
             var sprites = GameService.Instance.CurrentScreen?.AccessSpritesForRenderingOnly();
-            Renderer.RenderAsync(sprites);
+            await Renderer.RenderAsync(sprites);
         }
     }
 }
