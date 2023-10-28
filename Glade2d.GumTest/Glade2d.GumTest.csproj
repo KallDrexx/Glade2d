@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Gum\GumCommon\GumCommon.csproj" />
+      <ProjectReference Include="..\Glade2d\Glade2d.csproj" />
+      <ProjectReference Include="..\Samples\SampleProjectLab\SampleProjectLab.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="MeadowMgTestEnvironment" Version="1.3.0" />
+    </ItemGroup>
+
+</Project>

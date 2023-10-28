@@ -41,6 +41,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GladePlatformer.Juego", "Sa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GladeInvade.Juego", "Samples\GladeInvade.Juego\GladeInvade.Juego.csproj", "{0C96B4A7-7BDC-4B1A-8A9E-B162D79432A0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GumCommon", "..\Gum\GumCommon\GumCommon.csproj", "{DF101ECD-CE8A-4F63-87A8-F493FA6EDC28}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GumDataTypesNet6", "..\Gum\GumDataTypes\GumDataTypesNet6.csproj", "{B855A251-593D-4B75-BCC3-26F041186B53}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToolsUtilitiesStandard", "..\Gum\ToolsUtilities\ToolsUtilitiesStandard.csproj", "{CB370B72-E7CB-4280-9FD9-9068D65E130A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Glade2d.GumTest", "Glade2d.GumTest\Glade2d.GumTest.csproj", "{C7CE75C3-C6B3-4861-A351-94137F9EB3ED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -113,6 +121,22 @@ Global
 		{0C96B4A7-7BDC-4B1A-8A9E-B162D79432A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0C96B4A7-7BDC-4B1A-8A9E-B162D79432A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C96B4A7-7BDC-4B1A-8A9E-B162D79432A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF101ECD-CE8A-4F63-87A8-F493FA6EDC28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF101ECD-CE8A-4F63-87A8-F493FA6EDC28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF101ECD-CE8A-4F63-87A8-F493FA6EDC28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF101ECD-CE8A-4F63-87A8-F493FA6EDC28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B855A251-593D-4B75-BCC3-26F041186B53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B855A251-593D-4B75-BCC3-26F041186B53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B855A251-593D-4B75-BCC3-26F041186B53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B855A251-593D-4B75-BCC3-26F041186B53}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CB370B72-E7CB-4280-9FD9-9068D65E130A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CB370B72-E7CB-4280-9FD9-9068D65E130A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CB370B72-E7CB-4280-9FD9-9068D65E130A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CB370B72-E7CB-4280-9FD9-9068D65E130A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7CE75C3-C6B3-4861-A351-94137F9EB3ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7CE75C3-C6B3-4861-A351-94137F9EB3ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7CE75C3-C6B3-4861-A351-94137F9EB3ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7CE75C3-C6B3-4861-A351-94137F9EB3ED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
