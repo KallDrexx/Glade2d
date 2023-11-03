@@ -87,12 +87,11 @@ namespace GladeSampleShared.Screens
             // but also wide enough that it can tile with itself, so no seams show
             // when it scrolls. The trees will be staggered in two "depths", with
             // every other in front of the two surrounding to it.
-            var layerWidth = _screenWidth * 2;
-            // var layerWidth = _screenWidth +
-            //                  (_screenWidth % (tree.CurrentFrame.Width / 2));
+            var layerWidth = _screenWidth +
+                             (_screenWidth % (tree.CurrentFrame.Width / 2));
 
             var layer = GameService.Instance.GameInstance.Renderer.CreateLayer(new Dimensions(layerWidth, tree.CurrentFrame.Height));
-            layer.CameraOffset = new Point(-layerWidth / 2, _screenHeight - tree.CurrentFrame.Height - ground.CurrentFrame.Height);
+            layer.CameraOffset = new Point(0, _screenHeight - tree.CurrentFrame.Height - ground.CurrentFrame.Height);
             layer.BackgroundColor = new Color(79, 84, 107);
             layer.Clear();
 
@@ -123,15 +122,14 @@ namespace GladeSampleShared.Screens
             // We want to make sure the layer is at least as wide as the screen, 
             // but also wide enough that it can tile with itself, so no seams show
             // when it scrolls. 
-            // var layerWidth = _screenWidth + (_screenWidth % (mountain.CurrentFrame.Width));
-            var layerWidth = _screenWidth * 2;
+            var layerWidth = _screenWidth + (_screenWidth % (mountain.CurrentFrame.Width));
 
             var layer = GameService.Instance.GameInstance.Renderer.CreateLayer(
                 new Dimensions(layerWidth, mountain.CurrentFrame.Height));
             
             layer.BackgroundColor = _backgroundColor;
             layer.Clear();
-            layer.CameraOffset = new Point(-layerWidth / 2, _screenHeight - 16 - mountain.CurrentFrame.Height);
+            layer.CameraOffset = new Point(0, _screenHeight - 16 - mountain.CurrentFrame.Height);
 
             GameService.Instance.GameInstance.LayerManager.AddLayer(layer, -2);
 
@@ -147,11 +145,11 @@ namespace GladeSampleShared.Screens
         {
             var ground = new GroundChunk();
 
-            var layerWidth = _screenWidth * 2;
+            var layerWidth = _screenWidth;
             var layer = GameService.Instance.GameInstance.Renderer.CreateLayer(
                 new Dimensions(layerWidth, ground.CurrentFrame.Height));
             
-            layer.CameraOffset = new Point(-layerWidth / 2, _screenHeight - ground.CurrentFrame.Height);
+            layer.CameraOffset = new Point(0, _screenHeight - ground.CurrentFrame.Height);
             layer.DrawLayerWithTransparency = true;
             layer.Clear();
 
