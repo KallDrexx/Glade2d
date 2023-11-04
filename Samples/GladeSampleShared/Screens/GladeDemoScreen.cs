@@ -26,7 +26,7 @@ namespace GladeSampleShared.Screens
         private readonly Color _backgroundColor = new Color(57, 120, 168);
         private readonly Vector2 _treeVelocity = new Vector2(-15, 0);
         private readonly Vector2 _groundVelocity = new Vector2(-30, 0);
-        private readonly Vector2 _mountainVelocity = new Vector2(-12, 0);
+        private readonly Vector2 _mountainVelocity = new Vector2(-8, 0);
 
         public GladeDemoScreen()
         {
@@ -186,7 +186,7 @@ namespace GladeSampleShared.Screens
                 var xPos = rand.Between(0, _screenWidth);
                 var yPos = rand.Next(0, yOffsetMin);
                 var c = new Cloud(xPos, yPos);
-                c.VelocityX = rand.Between(-4f, -2f);
+                c.VelocityX = rand.Between(-12f, -2f);
                 c.Layer = 6;
                 _clouds.Add(c);
                 AddSprite(c);
@@ -220,7 +220,7 @@ namespace GladeSampleShared.Screens
                 var xPos = rand.Between(_screenWidth, _screenWidth + 8);
                 var yPos = rand.Next(0, yOffsetMin);
                 var c = new Cloud(xPos, yPos);
-                c.VelocityX = rand.Between(-4f, -2f);
+                c.VelocityX = rand.Between(-12f, -2f);
                 c.Layer = 6;
                 _clouds.Add(c);
                 AddSprite(c);
