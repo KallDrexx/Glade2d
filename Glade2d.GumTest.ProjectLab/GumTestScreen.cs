@@ -1,14 +1,14 @@
+using System.Diagnostics;
 using Glade2d.Screens;
 using Glade2d.Services;
 using GladeSampleShared.Entities;
-using Gum.Converters;
 using Gum.DataTypes;
 using Gum.Managers;
 using Gum.Wireframe;
 using RenderingLibrary;
 using RenderingLibrary.Graphics;
 
-namespace Glade2d.GumTest;
+namespace Glade2d.GumTest.ProjectLab;
 
 public class GumTestScreen : Screen
 {
@@ -37,7 +37,10 @@ public class GumTestScreen : Screen
             ui.Parent = container;
             ui.Width = cloud.Width;
             ui.Height = cloud.Height;
+            var timer = Stopwatch.StartNew();
             ui.UpdateLayout();
+            timer.Stop();
+            Console.WriteLine($"UpdateLayout took {timer.ElapsedMilliseconds}ms");
             
             cloud.X = invisibleRenderable.GetAbsoluteX();
             cloud.Y = invisibleRenderable.GetAbsoluteY();
