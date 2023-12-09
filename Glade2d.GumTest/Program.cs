@@ -4,9 +4,11 @@ using Glade2d.Graphics.SelfRenderer;
 using Glade2d.GumTest;
 using Glade2d.Profiling;
 using GladeSampleShared.Screens;
+using Meadow.Foundation.Sensors.Buttons;
 using MeadowMgTestEnvironment;
+using Microsoft.Xna.Framework.Input;
 
-var environment = new TestEnvironment(240, 240);
+var environment = new TestEnvironment(320, 240);
 var engine = new Game();
 
 var textureManager = new TextureManager(Environment.CurrentDirectory);

@@ -75,6 +75,7 @@ namespace Glade2d.Input
         /// </summary>
         public void ButtonPushed(string inputName)
         {
+            Console.WriteLine($"Button pressed: {inputName}");
             _pendingButtonStates.Enqueue(new KeyValuePair<string, ButtonState>(inputName, ButtonState.Down));
         }
 
@@ -83,6 +84,7 @@ namespace Glade2d.Input
         /// </summary>
         public void ButtonReleased(string inputName)
         {
+            Console.WriteLine($"Button Released: {inputName}");
             _pendingButtonStates.Enqueue(new KeyValuePair<string, ButtonState>(inputName, ButtonState.Up));
         }
 
@@ -96,6 +98,8 @@ namespace Glade2d.Input
 
             button.PressStarted += ButtonPressStarted;
             button.PressEnded += ButtonPressStopped;
+            
+            Console.WriteLine($"{_registeredButtons.Count} buttons registered");
         }
 
         /// <summary>

@@ -24,11 +24,16 @@ public class MeadowApp : App<F7CoreComputeV2>
     {
         var textureManager = new TextureManager(MeadowOS.FileSystem.UserFileSystemRoot);
         var layerManager = new LayerManager();
-        var profiler = new Profiler();
+        var profiler = new Profiler { IsActive = true};
         var renderer = new GladeSelfRenderer(_display, textureManager, layerManager, profiler, 2);
         
         var glade = new Game();
         glade.Initialize(renderer, textureManager, layerManager, profiler);
+        glade.InputManager.RegisterPushButton(_projectLab.LeftButton, nameof(GumTestScreen.GameInputs.LeftButton));
+        glade.InputManager.RegisterPushButton(_projectLab.RightButton, nameof(GumTestScreen.GameInputs.RightButton));
+        glade.InputManager.RegisterPushButton(_projectLab.UpButton, nameof(GumTestScreen.GameInputs.UpButton));
+        glade.InputManager.RegisterPushButton(_projectLab.DownButton, nameof(GumTestScreen.GameInputs.DownButton));
+        
         glade.Start(() => new GumTestScreen());
         
         return base.Run();
