@@ -2,15 +2,15 @@
 using Glade2d.Screens;
 using Glade2d.Services;
 using GladePlatformer.Shared.Entities;
-using Meadow.Foundation;
+using Meadow;
 
 namespace GladePlatformer.Shared.Screens;
 
 public class LevelScreen : Screen, IDisposable
 {
-    private const float PlayerSpeed = 30;
+    private const float PlayerSpeed = 50;
     private const float Gravity = 10f;
-    private const float JumpAcceleration = -50f;
+    private const float JumpAcceleration = -80f;
     
     private readonly int _screenWidth;
     private readonly Color _backgroundColor = new(57, 120, 168);

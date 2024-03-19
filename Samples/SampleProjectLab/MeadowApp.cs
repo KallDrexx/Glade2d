@@ -12,12 +12,13 @@ using System.Threading.Tasks;
 using Glade2d.Graphics;
 using Glade2d.Graphics.SelfRenderer;
 using Glade2d.Profiling;
+using Meadow.Peripherals.Displays;
 
 namespace SampleProjectLab
 {
     public class MeadowApp : App<F7FeatherV2>
     {
-        IGraphicsDisplay display;
+        IPixelDisplay display;
         Game glade;
 
         public override Task Run()
@@ -25,7 +26,7 @@ namespace SampleProjectLab
             var textureManager = new TextureManager(MeadowOS.FileSystem.UserFileSystemRoot);
             var layerManager = new LayerManager();
             var profiler = new Profiler();
-            var renderer = new GladeSelfRenderer(display, textureManager, layerManager, profiler);
+            var renderer = new GladeSelfRenderer(display, textureManager, layerManager, profiler, 2);
             
             LogService.Log.Trace("Initializing Glade game engine...");
             glade = new Game();
@@ -53,7 +54,7 @@ namespace SampleProjectLab
             var spi = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.COPI, Device.Pins.CIPO, config);
 
             LogService.Log.Trace("Initializing MCP...");
-            var mcp_in = Device.CreateDigitalInputPort(
+            var mcp_in = Device.CreateDigitalInterruptPort(
                 Device.Pins.D09,
                 InterruptMode.EdgeRising,
                 ResistorMode.InternalPullDown);
